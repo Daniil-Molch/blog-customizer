@@ -2,26 +2,112 @@ import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 
 import styles from './ArticleParamsForm.module.scss';
-// import { RadioGroup } from '../radio-group';
-
-export const ArticleParamsForm = () => {
+import { useState } from 'react';
+import { Text } from 'src/ui/text';
+import { Select } from 'src/ui/select';
+import { RadioGroup } from 'src/ui/radio-group';
+import {
+	fontSizeOptions,
+	fontFamilyOptions,
+	ArticleStateType,
+	fontColors,
+	backgroundColors,
+	contentWidthArr,
+} from 'src/constants/articleProps';
+import { Separator } from '../separator';
+type Props = {
+	onSubmit: (settings: Partial<ArticleStateType>) => void;
+	onReset: () => void;
+};
+export const ArticleParamsForm = (props: Props) => {
+	const [isOpen, setIsOpen] = useState(false);
+	console.log(isOpen);
+	let className = styles.container;
+	if (isOpen) {
+		className = className + ' ' + styles.container_open;
+	}
+	const [selectedFontSize, setSelectedFontSize] = useState(fontSizeOptions[0]);
+	const [selectedFont, setSelectedFont] = useState(fontFamilyOptions[0]);
+	const [seletedFontColors, setSelectedFontColors] = useState(fontColors[0]);
+	const [selectedBackgroundColors, setSelectedBackgroundColors] = useState(
+		backgroundColors[0]
+	);
+	const [seletedContentWidthArr, setSelectedContentWidthArr] = useState(
+		contentWidthArr[0]
+	);
 	return (
 		<>
-			<ArrowButton isOpen={false} onClick={() => {}} />
-			<aside className={styles.container}>
-				<form className={styles.form}>
+			<ArrowButton
+				isOpen={isOpen}
+				onClick={() => {
+					if (isOpen) {
+						setIsOpen(false);
+					} else {
+						setIsOpen(true);
+					}
+				}}
+			/>
+			<aside className={className}>
+				<form
+					className={styles.form}
+					onSubmit={(e) => {
+						props.onSubmit({
+							fontFamilyOption: selectedFont,
+							fontSizeOption: selectedFontSize,
+							fontColor: seletedFontColors,
+							backgroundColor: selectedBackgroundColors,
+							contentWidth: seletedContentWidthArr,
+						});
+						e.preventDefault();
+					}}
+					onReset={() => {
+						props.onReset();
+						setSelectedFont(fontFamilyOptions[0]);
+						setSelectedFontSize(fontSizeOptions[0]);
+						setSelectedFontColors(fontColors[0]);
+						setSelectedBackgroundColors(backgroundColors[0]);
+						setSelectedContentWidthArr(contentWidthArr[0]);
+					}}>
+					<Text weight={800} size={31}>
+						Задайте параметры
+					</Text>
+					<Select
+						selected={selectedFont}
+						options={fontFamilyOptions}
+						title='шрифт'
+						onChange={setSelectedFont}
+					/>
+
+					<RadioGroup
+						title='размер шрифта'
+						name='font size'
+						selected={selectedFontSize}
+						options={fontSizeOptions}
+						onChange={(option) => {
+							console.log(option);
+							setSelectedFontSize(option);
+						}}
+					/>
+					<Select
+						selected={seletedFontColors}
+						options={fontColors}
+						title='цвет шрифта'
+						onChange={setSelectedFontColors}
+					/>
+					<Separator />
+					<Select
+						selected={selectedBackgroundColors}
+						options={backgroundColors}
+						title='цвет фона'
+						onChange={setSelectedBackgroundColors}
+					/>
+					<Select
+						selected={seletedContentWidthArr}
+						options={contentWidthArr}
+						title='ширина контента'
+						onChange={setSelectedContentWidthArr}
+					/>
 					<div className={styles.bottomContainer}>
-						<h1></h1>
-						<form></form>
-						<select></select>
-						{/* <RadioGroup
-						title=''
-						name=''
-						selected={}
-						/> */}
-						<select></select>
-						<select></select>
-						<select></select>
 						<Button title='Сбросить' htmlType='reset' type='clear' />
 						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>

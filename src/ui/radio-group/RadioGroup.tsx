@@ -34,7 +34,9 @@ export const RadioGroup = (props: RadioGroupProps) => {
 						value={option.value}
 						title={option.title}
 						selected={selected}
-						onChange={() => handleChange(option)}
+						onChange={() => {
+							return handleChange(option);
+						}}
 						option={option}
 					/>
 				))}
