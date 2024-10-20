@@ -38,6 +38,7 @@ export const ArticleParamsForm = (props: Props) => {
 
 	const toolTipRef = useRef<HTMLFormElement | null>(null);
 	useEffect(() => {
+		if (!isMenuOpen) return;
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
 				toolTipRef.current &&
@@ -50,7 +51,7 @@ export const ArticleParamsForm = (props: Props) => {
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, []);
+	}, [isMenuOpen]);
 
 	return (
 		<>
