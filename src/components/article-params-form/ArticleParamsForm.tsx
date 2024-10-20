@@ -2,7 +2,7 @@ import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 
 import styles from './ArticleParamsForm.module.scss';
-import { useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Text } from 'src/ui/text';
 import { Select } from 'src/ui/select';
 import { RadioGroup } from 'src/ui/radio-group';
@@ -20,10 +20,10 @@ type Props = {
 	onReset: () => void;
 };
 export const ArticleParamsForm = (props: Props) => {
-	const [isOpen, setIsOpen] = useState(false);
-	console.log(isOpen);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	console.log(isMenuOpen);
 	let className = styles.container;
-	if (isOpen) {
+	if (isMenuOpen) {
 		className = className + ' ' + styles.container_open;
 	}
 	const [selectedFontSize, setSelectedFontSize] = useState(fontSizeOptions[0]);
@@ -35,15 +35,32 @@ export const ArticleParamsForm = (props: Props) => {
 	const [seletedContentWidthArr, setSelectedContentWidthArr] = useState(
 		contentWidthArr[0]
 	);
+
+	const toolTipRef = useRef<HTMLFormElement | null>(null);
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				toolTipRef.current &&
+				!toolTipRef.current.contains(event.target as HTMLElement)
+			) {
+				setIsMenuOpen(false);
+			}
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
+
 	return (
 		<>
 			<ArrowButton
-				isOpen={isOpen}
+				isOpen={isMenuOpen}
 				onClick={() => {
-					if (isOpen) {
-						setIsOpen(false);
+					if (isMenuOpen) {
+						setIsMenuOpen(false);
 					} else {
-						setIsOpen(true);
+						setIsMenuOpen(true);
 					}
 				}}
 			/>
@@ -67,7 +84,8 @@ export const ArticleParamsForm = (props: Props) => {
 						setSelectedFontColors(fontColors[0]);
 						setSelectedBackgroundColors(backgroundColors[0]);
 						setSelectedContentWidthArr(contentWidthArr[0]);
-					}}>
+					}}
+					ref={toolTipRef}>
 					<Text weight={800} size={31}>
 						Задайте параметры
 					</Text>
